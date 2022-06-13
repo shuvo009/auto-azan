@@ -15,19 +15,17 @@ logging.basicConfig(filename="log.txt",
                     filemode='a',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                     datefmt='%H:%M:%S',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 # set up logging to console
 console = logging.StreamHandler()
-console.setLevel(logging.DEBUG)
+console.setLevel(logging.INFO)
 # set a format which is simpler for console use
 formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
 console.setFormatter(formatter)
 logging.getLogger("").addHandler(console)
 
 LOCAL_MOSQUE = "https://www.rabita.no/"
-AZAN_FILE = r"./azan.wav"
-PLAYER = r"aplay"
 
 @retry(wait=wait_random_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(15))
 def get_page_html():
@@ -80,7 +78,7 @@ def get_namaz_times(html):
 
 def azan():
     logging.info("Playing azan")
-    subprocess.call([PLAYER, AZAN_FILE], shell=True)
+    subprocess.call(["aplay ./azan.wav"], shell=True)
 
 def schedule_azan():
     schedule.clear('azan')
@@ -117,9 +115,11 @@ def schedule_refresh_azans():
     schedule.every().day.at("03:03").do(schedule_azan)
     logging.info("scheduled schedule_refresh_azans")
 
+
 logging.info("@@@ Azan shedular get started @@@")
 schedule_refresh_azans()
 schedule_azan()
+subprocess.call(["aplay ./startup.wav"], shell=True)
 
 while True:
     schedule.run_pending()
