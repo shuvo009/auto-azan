@@ -1,0 +1,4 @@
+beautifulsoup4==4.11.1
+schedule==1.1.0
+selenium==4.1.5
+tenacity==8.0.1
