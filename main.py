@@ -6,10 +6,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import schedule
-import subprocess
 import time
 import datetime
 import logging
+import os
+import pygame
 
 logging.basicConfig(filename="log.txt",
                     filemode='a',
@@ -19,7 +20,7 @@ logging.basicConfig(filename="log.txt",
 
 # set up logging to console
 console = logging.StreamHandler()
-console.setLevel(logging.INFO)
+console.setLevel(logging.DEBUG)
 # set a format which is simpler for console use
 formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
 console.setFormatter(formatter)
@@ -30,6 +31,9 @@ LOCAL_MOSQUE = "https://www.rabita.no/"
 @retry(wait=wait_random_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(15))
 def get_page_html():
     chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox");
+    chrome_options.add_argument("--disable-dev-shm-usage");
+    chrome_options.add_argument("--headless");
     chrome_options.headless = True
     logging.info("starting download content")
 
@@ -76,9 +80,17 @@ def get_namaz_times(html):
     logging.info("azan times are ready")
     return namaz_time
 
+def play_sound(soundFile):
+    pygame.mixer.init()
+    pygame.mixer.music.load(soundFile)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True:
+        continue
+
 def azan():
     logging.info("Playing azan")
-    subprocess.call(["aplay ./azan.wav"], shell=True)
+    play_sound("./startup.wav")
+    play_sound("./azan.wav")
 
 def schedule_azan():
     schedule.clear('azan')
@@ -111,6 +123,9 @@ def can_schedule(azan_time):
 
     return True
 
+def reboot_system():
+    os.system("sudo reboot")
+
 def schedule_refresh_azans():
     schedule.every().day.at("03:03").do(schedule_azan)
     logging.info("scheduled schedule_refresh_azans")
@@ -119,7 +134,7 @@ def schedule_refresh_azans():
 logging.info("@@@ Azan shedular get started @@@")
 schedule_refresh_azans()
 schedule_azan()
-subprocess.call(["aplay ./startup.wav"], shell=True)
+play_sound("./startup.wav")
 
 while True:
     schedule.run_pending()
