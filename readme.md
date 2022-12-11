@@ -15,6 +15,7 @@ It's open for all. I use [Rabita](https://www.rabita.no/) web site to get azan t
 3) From directory when you download : ``` pip install -r requirements.txt ```
 4) From Terminal ``` sudo nano /etc/xdg/lxsession/LXDE-pi/autostart ```
 5) Add this line : ``` @/usr/bin/python3 /home/pi/autoazan/s.py ```
+6) reboot your pi
 
 ## For Other Country or Mosque
 
