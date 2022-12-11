@@ -11,6 +11,7 @@ It's open for all. I use [Rabita](https://www.rabita.no/) web site to get azan t
 ## Installation
 
 1) Prepare your raspberry pi : https://www.raspberrypi.com/software/
+2) Download Code at extract at ``` /home/pi/auto-azan ```
 2) From Terminal ``` sudo apt install chromium-chromedriver ```
 3) From directory when you download : ``` pip install -r requirements.txt ```
 4) From Terminal ``` sudo nano /etc/xdg/lxsession/LXDE-pi/autostart ```

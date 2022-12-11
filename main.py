@@ -89,8 +89,8 @@ def play_sound(soundFile):
 
 def azan():
     logging.info("Playing azan")
-    play_sound("./startup.wav")
-    play_sound("./azan.wav")
+    play_sound("/home/pi/auto-azan/startup.wav")
+    play_sound("/home/pi/auto-azan/azan.wav")
 
 def schedule_azan():
     schedule.clear('azan')
@@ -134,7 +134,7 @@ def schedule_refresh_azans():
 logging.info("@@@ Azan shedular get started @@@")
 schedule_refresh_azans()
 schedule_azan()
-play_sound("./startup.wav")
+play_sound("/home/pi/auto-azan/startup.wav")
 
 while True:
     schedule.run_pending()
