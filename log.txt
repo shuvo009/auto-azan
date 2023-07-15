@@ -1,0 +1,14 @@
+20:14:43,191 root INFO @@@ Azan shedular get started @@@
+20:14:43,192 root INFO scheduled schedule_refresh_azans
+20:14:43,193 root INFO scheduled clear all exting azans
+20:14:43,396 root INFO azan times are ready
+20:16:05,662 root INFO @@@ Azan shedular get started @@@
+20:16:05,664 root INFO scheduled schedule_refresh_azans
+20:16:05,665 root INFO scheduled clear all exting azans
+20:16:05,851 root INFO azan times are ready
+20:16:05,853 root INFO Azan time passed for fajr Time 03:17
+20:16:05,853 root INFO Azan time passed for zuhr Time 13:33
+20:16:05,853 root INFO Azan time passed for asr Time 17:57
+20:16:05,854 root INFO maghrib 22:29
+20:16:05,854 root INFO isha 23:09
+20:16:05,855 root INFO azans are sheduled
