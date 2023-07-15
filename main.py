@@ -111,7 +111,7 @@ def schedule_refresh_azans():
 logging.info("@@@ Azan shedular get started @@@")
 schedule_refresh_azans()
 schedule_azan()
-play_sound("/home/{0}auto-azan/startup.wav".format(OS_USER))
+play_sound("/home/{0}/auto-azan/startup.wav".format(OS_USER))
 
 while True:
     schedule.run_pending()
