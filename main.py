@@ -23,6 +23,7 @@ logging.getLogger("").addHandler(console)
 
 API_BASE_URL = 'https://time.my-masjid.com/api/TimingsInfoScreen/GetMasjidTimings?GuidId={0}'
 MASJID = '4f14a4b0-4151-40d0-953f-d3f317a8d51c'
+OS_USER = os.getlogin()
 
 
 @retry(wait=wait_random_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(15))
@@ -59,7 +60,7 @@ def play_sound(soundFile):
 def azan():
     """Return No"""
     logging.info("Playing azan")
-    play_sound("/home/auto-azan/azan.wav")
+    play_sound("/home/{0}/auto-azan/azan.wav".format(OS_USER))
 
 
 def schedule_azan():
@@ -110,7 +111,7 @@ def schedule_refresh_azans():
 logging.info("@@@ Azan shedular get started @@@")
 schedule_refresh_azans()
 schedule_azan()
-play_sound("/home/auto-azan/startup.wav")
+play_sound("/home/{0}auto-azan/startup.wav".format(OS_USER))
 
 while True:
     schedule.run_pending()
