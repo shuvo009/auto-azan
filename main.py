@@ -104,7 +104,7 @@ def reboot_system():
 
 def schedule_refresh_azans():
     """Return No"""
-    schedule.every().day.at("02:00").do(schedule_azan)
+    schedule.every().day.at("01:00").do(schedule_azan)
     logging.info("scheduled schedule_refresh_azans")
 
 
