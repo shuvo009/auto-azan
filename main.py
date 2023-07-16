@@ -51,7 +51,6 @@ def get_namaz_times():
 def play_sound(sound_file):
     """Return No"""
     file_path = sound_file.format(OS_USER)
-    file_path = '/home/azan/auto-azan/startup.wav'
     pygame.mixer.init()
     pygame.mixer.music.load(file_path)
     pygame.mixer.music.play()
