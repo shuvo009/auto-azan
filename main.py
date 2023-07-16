@@ -1,11 +1,11 @@
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from playsound import playsound
 import schedule
 import time
 import datetime
 import logging
 import os
 import requests
+import pygame
 
 logging.basicConfig(filename="log.txt",
                     filemode='a',
@@ -48,10 +48,15 @@ def get_namaz_times():
     return namaz_time
 
 
-def play_sound(soundFile):
+def play_sound(sound_file):
     """Return No"""
-    file_path = soundFile.format(OS_USER)
-    playsound(file_path)
+    file_path = sound_file.format(OS_USER)
+    file_path = '/home/azan/auto-azan/startup.wav'
+    pygame.mixer.init()
+    pygame.mixer.music.load(file_path)
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy() == True:
+        continue
 
 def azan():
     """Return No"""
