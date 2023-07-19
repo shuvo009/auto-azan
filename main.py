@@ -1,15 +1,10 @@
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
 import schedule
 import time
 import datetime
 import logging
 import os
+import requests
 import pygame
 
 logging.basicConfig(filename="log.txt",
@@ -26,87 +21,65 @@ formatter = logging.Formatter('%(asctime)s : %(levelname)s : %(message)s')
 console.setFormatter(formatter)
 logging.getLogger("").addHandler(console)
 
-LOCAL_MOSQUE = "https://www.rabita.no/"
+API_BASE_URL = 'https://time.my-masjid.com/api/TimingsInfoScreen/GetMasjidTimings?GuidId={0}'
+MASJID = '4f14a4b0-4151-40d0-953f-d3f317a8d51c'
+OS_USER = os.getlogin()
+
 
 @retry(wait=wait_random_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(15))
-def get_page_html():
-    chrome_options = Options()
-    chrome_options.add_argument("--no-sandbox");
-    chrome_options.add_argument("--disable-dev-shm-usage");
-    chrome_options.add_argument("--headless");
-    chrome_options.headless = True
-    logging.info("starting download content")
+def get_namaz_times():
+    """Return No"""
+    masjid_times = requests.get(API_BASE_URL.format(MASJID)).json()
+    current_day = datetime.datetime.now().day
+    current_month = datetime.datetime.now().month
 
-    with webdriver.Chrome(options=chrome_options) as driver:
-        driver.get(LOCAL_MOSQUE)
-        element_present = EC.presence_of_element_located((By.CLASS_NAME, 'responsiveExpander'))
-        WebDriverWait(driver, 30).until(element_present)
-        elem = driver.find_element(By.XPATH, "//*")
-        source_code = elem.get_attribute("outerHTML")
-        logging.info("content downloaded")
-        driver.quit()
-        return source_code
-
-def html_to_json(beautifulSoupContent):
-    rows = beautifulSoupContent.find("tbody").find_all("tr")
+    current_day_namaz_time = [x for x in masjid_times['model']['salahTimings']
+                  if x["day"] == current_day and x["month"] == current_month][0]
     
-    headers = {}
-    thead = beautifulSoupContent.find("thead")
-    if thead:
-        thead = thead.find_all("th")
-        for i in range(len(thead)):
-            headers[i] = thead[i].text.strip().lower()
-    data = []
-    for row in rows:
-        cells = row.find_all("td")
-        if thead:
-            items = {}
-            for index in headers:
-                items[headers[index]] = cells[index].text
-        else:
-            items = []
-            for index in cells:
-                items.append(index.text.strip())
-        data.append(items)
-    return data
+    namaz_time = {
+        "fajr": current_day_namaz_time['fajr'],
+        "zuhr": current_day_namaz_time['zuhr'],
+        "asr": current_day_namaz_time['asr'],
+        "maghrib": current_day_namaz_time['maghrib'],
+        "isha": current_day_namaz_time['isha'],
+    }
 
-def get_namaz_times(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    content = soup.find(id="table_1")
-    logging.info("get content for azan times")
-    namaz_times = html_to_json(content)
-    namaz_time = namaz_times[0]
-    namaz_time.pop('soloppgang', None)
     logging.info("azan times are ready")
     return namaz_time
 
-def play_sound(soundFile):
+
+def play_sound(sound_file):
+    """Return No"""
+    file_path = sound_file.format(OS_USER)
     pygame.mixer.init()
-    pygame.mixer.music.load(soundFile)
+    pygame.mixer.music.load(file_path)
     pygame.mixer.music.play()
     while pygame.mixer.music.get_busy() == True:
         continue
 
 def azan():
+    """Return No"""
     logging.info("Playing azan")
-    play_sound("/home/pi/auto-azan/startup.wav")
-    play_sound("/home/pi/auto-azan/azan.wav")
+    play_sound("/home/{0}/auto-azan/azan.wav")
+
 
 def schedule_azan():
+    """Return No"""
     schedule.clear('azan')
     logging.info("scheduled clear all exting azans")
-    contents = get_page_html()
-    times = get_namaz_times(contents)
+    times = get_namaz_times()
     for key, value in times.items():
-        if(can_schedule(value)):
+        if (can_schedule(value)):
             schedule.every().day.at(value).do(azan).tag('azan')
             logging.info(key + " " + value)
         else:
-            logging.info("Azan time passed for " + key + " Time "+ value)
+            logging.info("Azan time passed for " + key + " Time " + value)
 
     logging.info("azans are sheduled")
 
+
 def can_schedule(azan_time):
+    """Return No"""
     current_time = datetime.datetime.now()
     current_hour = int(current_time.strftime("%H"))
     current_minutes = int(current_time.strftime("%M"))
@@ -118,23 +91,27 @@ def can_schedule(azan_time):
     if (current_hour > azan_hour):
         return False
 
-    if(current_hour == azan_hour and current_minutes > azan_minute):
+    if (current_hour == azan_hour and current_minutes > azan_minute):
         return False
 
     return True
 
+
 def reboot_system():
+    """Return No"""
     os.system("sudo reboot")
 
+
 def schedule_refresh_azans():
-    schedule.every().day.at("03:03").do(schedule_azan)
+    """Return No"""
+    schedule.every().day.at("01:00").do(schedule_azan)
     logging.info("scheduled schedule_refresh_azans")
 
 
 logging.info("@@@ Azan shedular get started @@@")
 schedule_refresh_azans()
 schedule_azan()
-play_sound("/home/pi/auto-azan/startup.wav")
+play_sound("/home/{0}/auto-azan/startup.wav")
 
 while True:
     schedule.run_pending()
