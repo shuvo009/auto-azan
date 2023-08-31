@@ -28,7 +28,7 @@ OS_USER = os.getlogin()
 
 def handle_dst(azan_time):
     """Return string"""
-    minues = 60 if 3 < datetime.datetime.now().month > 11 else 0
+    minues = 60 if 3 < datetime.datetime.now().month < 11 else 0
     azan_h = int(azan_time.split(":")[0])
     azan_m = int(azan_time.split(":")[1])
     azan_dt = datetime.datetime.combine(datetime.date.today(), datetime.time(azan_h, azan_m)) + datetime.timedelta(minutes=minues)
@@ -40,7 +40,7 @@ def get_namaz_times():
     masjid_times = requests.get(API_BASE_URL.format(MASJID)).json()
     current_day = datetime.datetime.now().day
     current_month = datetime.datetime.now().month
-    has_dst = bool(strtobool(masjid_times['model']['masjidSettings']['isDstOn']))
+    has_dst = masjid_times['model']['masjidSettings']['isDstOn']
     current_day_namaz_time = [x for x in masjid_times['model']['salahTimings']
                   if x["day"] == current_day and x["month"] == current_month][0]
     
