@@ -6,6 +6,7 @@ import logging
 import os
 import requests
 import pygame
+from distutils.util import strtobool
 
 logging.basicConfig(filename="log.txt",
                     filemode='a',
@@ -25,6 +26,13 @@ API_BASE_URL = 'https://time.my-masjid.com/api/TimingsInfoScreen/GetMasjidTiming
 MASJID = '4f14a4b0-4151-40d0-953f-d3f317a8d51c'
 OS_USER = os.getlogin()
 
+def handle_dst(azan_time):
+    """Return string"""
+    minues = 60 if 3 < datetime.datetime.now().month < 11 else 0
+    azan_h = int(azan_time.split(":")[0])
+    azan_m = int(azan_time.split(":")[1])
+    azan_dt = datetime.datetime.combine(datetime.date.today(), datetime.time(azan_h, azan_m)) + datetime.timedelta(minutes=minues)
+    return azan_dt.strftime('%H:%M')
 
 @retry(wait=wait_random_exponential(multiplier=1, min=4, max=60), stop=stop_after_attempt(15))
 def get_namaz_times():
@@ -32,21 +40,20 @@ def get_namaz_times():
     masjid_times = requests.get(API_BASE_URL.format(MASJID)).json()
     current_day = datetime.datetime.now().day
     current_month = datetime.datetime.now().month
-
+    has_dst = masjid_times['model']['masjidSettings']['isDstOn']
     current_day_namaz_time = [x for x in masjid_times['model']['salahTimings']
                   if x["day"] == current_day and x["month"] == current_month][0]
     
     namaz_time = {
-        "fajr": current_day_namaz_time['fajr'],
-        "zuhr": current_day_namaz_time['zuhr'],
-        "asr": current_day_namaz_time['asr'],
-        "maghrib": current_day_namaz_time['maghrib'],
-        "isha": current_day_namaz_time['isha'],
+        "fajr": handle_dst(current_day_namaz_time['fajr']) if has_dst else current_day_namaz_time['fajr'],
+        "zuhr": handle_dst(current_day_namaz_time['zuhr']) if has_dst else current_day_namaz_time['zuhr'],
+        "asr":  handle_dst(current_day_namaz_time['asr']) if has_dst else current_day_namaz_time['asr'],
+        "maghrib": handle_dst(current_day_namaz_time['maghrib']) if has_dst else current_day_namaz_time['maghrib'],
+        "isha":  handle_dst(current_day_namaz_time['isha']) if has_dst else current_day_namaz_time['isha'],
     }
 
     logging.info("azan times are ready")
     return namaz_time
-
 
 def play_sound(sound_file):
     """Return No"""
