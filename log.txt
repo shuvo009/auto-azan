@@ -12,3 +12,16 @@
 20:16:05,854 root INFO maghrib 22:29
 20:16:05,854 root INFO isha 23:09
 20:16:05,855 root INFO azans are sheduled
+20:42:30,685 root INFO @@@ Azan shedular get started @@@
+20:42:30,687 root INFO scheduled schedule_refresh_azans
+20:42:30,687 root INFO scheduled clear all exting azans
+20:42:30,688 root INFO starting download content
+20:42:31,451 root INFO starting download content
+20:42:32,56 root INFO starting download content
+20:42:34,587 root INFO starting download content
+20:42:41,833 root INFO starting download content
+20:42:51,424 root INFO starting download content
+20:42:52,82 root INFO starting download content
+20:43:40,514 root INFO starting download content
+20:44:05,924 root INFO starting download content
+20:44:15,642 root INFO starting download content
