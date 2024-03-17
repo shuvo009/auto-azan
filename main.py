@@ -29,7 +29,7 @@ console.setFormatter(formatter)
 logging.getLogger("").addHandler(console)
 
 API_BASE_URL = 'https://time.my-masjid.com/api/TimingsInfoScreen/GetMasjidTimings?GuidId={0}'
-MASJID = '4f14a4b0-4151-40d0-953f-d3f317a8d51c'
+MASJID = '4f14a4b0-4151-40d0-953f-d3f317a8d51c' #Rabita
 OS_USER = os.getlogin()
 LOCAL_MOSQUE = "https://www.rabita.no/"
 
@@ -189,7 +189,7 @@ schedule_refresh_azans()
 try:
     schedule_azan()
     play_sound("/home/{0}/auto-azan/startup.wav")
-    logging.error("(*_*) Namaz time schedule successfully (*_*)")
+    logging.info("(*_*) Namaz time schedule successfully (*_*)")
 except:
     logging.error("(-_-) Download namaz time failed (-_-)")
 
