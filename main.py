@@ -30,7 +30,7 @@ logging.getLogger("").addHandler(console)
 
 API_BASE_URL = 'https://time.my-masjid.com/api/TimingsInfoScreen/GetMasjidTimings?GuidId={0}'
 MASJID = '4f14a4b0-4151-40d0-953f-d3f317a8d51c'
-OS_USER = "pi" #os.getlogin()
+OS_USER = os.getlogin()
 LOCAL_MOSQUE = "https://www.rabita.no/"
 
 def handle_dst(azan_time):
