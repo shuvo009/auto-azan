@@ -185,7 +185,6 @@ def schedule_refresh_azans():
 
 logging.info("@@@ Azan shedular get started @@@")
 schedule_refresh_azans()
-schedule_azan()
 
 try:
     schedule_azan()
