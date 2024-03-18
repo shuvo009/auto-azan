@@ -124,7 +124,7 @@ def get_namaz_times():
     except:
         namaz_time_api = get_namaz_times_from_api()
         logging.info("Times downloaded from API")
-        return namz_time_html
+        return namaz_time_api
 
 #Download Times Ends
 
